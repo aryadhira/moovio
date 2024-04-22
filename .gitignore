@@ -1,3 +1,5 @@
 *.env
 
 *.DS_Store
+
+services/backend/streamer/torrent_data/*

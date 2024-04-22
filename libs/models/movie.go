@@ -16,6 +16,7 @@ type MovieModel struct {
 	Quality         string             `json:"quality" bson:"quality"`
 	Hash            string             `json:"hash" bson:"hash"`
 	Slug            string             `json:"slug" bson:"slug"`
+	MagnetUrl       string             `json:"magneturl" bson:"magneturl"`
 	Category        []string           `json:"category" bson:"category"`
 	PopulateDate    time.Time          `json:"populatedate" bson:"populatedate"`
 	PopulateDateInt int                `json:"populatedateint" bson:"populatedateint"`

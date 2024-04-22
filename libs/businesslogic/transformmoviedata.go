@@ -47,13 +47,15 @@ func TransformMovieData(db helper.Mongodbhelper, datas map[string]interface{}) e
 		movie := models.MovieModel{}
 		movie.Title = helper.InterfaceToString(obj["title"])
 		movie.Year = int(helper.InterfaceToFloat64(obj["year"]))
-		movie.Cover = helper.InterfaceToString(obj["background_image"])
+		movie.Cover = helper.InterfaceToString(obj["large_cover_image"])
 		movie.Slug = helper.InterfaceToString(obj["slug"])
 		movie.Rating = helper.InterfaceToFloat64(obj["rating"])
 		movie.Synopsis = helper.InterfaceToString(obj["synopsis"])
 		movie.PopulateDate = populatedate
 		movie.PopulateDateInt = helper.ConvertDateTimetoDateInt(populatedate)
-		movie.Category = helper.ArrayinterfaceToArrayString(obj["genres"].([]interface{}))
+		if obj["genres"] != nil {
+			movie.Category = helper.ArrayinterfaceToArrayString(obj["genres"].([]interface{}))
+		}
 
 		torrents := obj["torrents"].([]interface{})
 		for _, torrent := range torrents {
@@ -61,6 +63,10 @@ func TransformMovieData(db helper.Mongodbhelper, datas map[string]interface{}) e
 			movie.Id = primitive.NewObjectID()
 			movie.Quality = helper.InterfaceToString(torrentobj["quality"])
 			movie.Hash = helper.InterfaceToString(torrentobj["hash"])
+			magneturl := helper.GenerateMagnetUrl(movie.Title, movie.Hash, movie.Quality)
+			movie.MagnetUrl = magneturl
+
+			// Duplication Validation
 			if !DuplicateCheck(movie, existingdatamap) {
 				movs = append(movs, movie)
 			}
