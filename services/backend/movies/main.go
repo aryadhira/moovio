@@ -27,5 +27,5 @@ func main() {
 
 	apiserver := NewMoviesApiServer(svc)
 
-	log.Fatal(apiserver.Start(":9002"))
+	log.Fatal(apiserver.Start(":9003"))
 }

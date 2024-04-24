@@ -19,7 +19,7 @@ func NewGrabberApiServer(svc GrabberService) *GrabberApiServer {
 func (s *GrabberApiServer) Start(listenaddr string) error {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/fetchmoviedata", s.handleFetchMovieData)
+	mux.HandleFunc("/grabber/fetchmoviedata", s.handleFetchMovieData)
 
 	server := new(http.Server)
 	server.Handler = mux

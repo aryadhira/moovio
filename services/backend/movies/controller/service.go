@@ -44,3 +44,13 @@ func (s *MovieService) GetMovieByID(id string) (models.MovieModel, error) {
 
 	return out, nil
 }
+
+func (s *MovieService) GetTopImdbRating() ([]bson.M, error) {
+	var err error
+	out, err := GetTopImdbRating(s.db)
+	if err != nil {
+		return out, err
+	}
+
+	return out, nil
+}

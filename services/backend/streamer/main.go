@@ -28,5 +28,5 @@ func main() {
 
 	apiserver := NewStreamerApiServer(svc)
 
-	log.Fatal(apiserver.Start(":9003"))
+	log.Fatal(apiserver.Start(":9004"))
 }

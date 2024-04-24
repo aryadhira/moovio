@@ -40,7 +40,7 @@ func GetLatestMovieList(db helper.Mongodbhelper) ([]bson.M, error) {
 	}
 
 	limitstage := bson.M{
-		constant.Limit: 10,
+		constant.Limit: 16,
 	}
 
 	pipes := []bson.M{}
@@ -62,6 +62,50 @@ func GetMovieByID(db helper.Mongodbhelper, id primitive.ObjectID) (models.MovieM
 	out := models.MovieModel{}
 
 	err = db.FindOne(new(models.MovieModel).CollectionName(), bson.M{"_id": id}, bson.M{}, &out)
+	if err != nil {
+		return out, err
+	}
+
+	return out, nil
+}
+
+func GetTopImdbRating(db helper.Mongodbhelper) ([]bson.M, error) {
+	var err error
+	out := []bson.M{}
+
+	groupstage := bson.M{
+		constant.Group: bson.M{
+			"_id":  "$title",
+			"data": bson.M{"$first": "$$ROOT"},
+		},
+	}
+
+	projectstage := bson.M{
+		constant.Project: bson.M{
+			"_id":    0,
+			"id":     "$data._id",
+			"title":  "$_id",
+			"rating": "$data.rating",
+			"year":   "$data.year",
+			"cover":  "$data.cover",
+		},
+	}
+
+	sortstage := bson.M{
+		constant.Sort: bson.M{"rating": -1},
+	}
+
+	limitstage := bson.M{
+		constant.Limit: 16,
+	}
+
+	pipe := []bson.M{}
+	pipe = append(pipe, groupstage)
+	pipe = append(pipe, projectstage)
+	pipe = append(pipe, sortstage)
+	pipe = append(pipe, limitstage)
+
+	err = db.Aggregate(new(models.MovieModel).CollectionName(), pipe, &out)
 	if err != nil {
 		return out, err
 	}

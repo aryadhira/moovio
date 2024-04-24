@@ -3,6 +3,8 @@ package streamer
 import (
 	"moovio/libs/helper"
 	"moovio/libs/models"
+	"os"
+	"strings"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -29,4 +31,19 @@ func (s *StreamerService) GetMovieMagnetUrl(title, quality string) (string, erro
 	out = movie.MagnetUrl
 
 	return out, nil
+}
+
+func (s *StreamerService) CheckingIsFolderExist(title string) bool {
+	out := false
+
+	path := "./torrent_data"
+
+	items, _ := os.ReadDir(path)
+	for _, item := range items {
+		if item.IsDir() && strings.Contains(item.Name(), title) {
+			return true
+		}
+	}
+
+	return out
 }

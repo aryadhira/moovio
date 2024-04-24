@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type MoviesApiServer struct {
@@ -22,8 +23,8 @@ func NewMoviesApiServer(svc MovieService) *MoviesApiServer {
 func (s *MoviesApiServer) Start(listenaddr string) error {
 	mux := mux.NewRouter()
 
-	mux.HandleFunc("/getmovielist", s.GetMovieList)
-	mux.HandleFunc("/getmoviedetail", s.GetMovieDetail)
+	mux.HandleFunc("/movies/getmovielist", s.GetMovieList)
+	mux.HandleFunc("/movies/getmoviedetail", s.GetMovieDetail)
 
 	handler := cors.Default().Handler(mux)
 
@@ -41,7 +42,21 @@ func (s *MoviesApiServer) Start(listenaddr string) error {
 }
 
 func (s *MoviesApiServer) GetMovieList(w http.ResponseWriter, r *http.Request) {
-	datas, err := s.svc.GetLatestMovieList()
+	var err error
+	datas := []bson.M{}
+
+	listtype := r.URL.Query().Get("list")
+
+	if listtype == "" {
+		helper.WriteJSON(w, http.StatusUnprocessableEntity, "List Type Not Defined", nil)
+	}
+
+	switch listtype {
+	case "latest":
+		datas, err = s.svc.GetLatestMovieList()
+	case "imdb":
+		datas, err = s.svc.GetTopImdbRating()
+	}
 
 	if err != nil {
 		helper.WriteJSON(w, http.StatusUnprocessableEntity, err.Error(), nil)
