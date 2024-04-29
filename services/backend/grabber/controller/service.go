@@ -1,4 +1,4 @@
-package grabber
+package controller
 
 import (
 	"log"
@@ -34,7 +34,10 @@ func (s *GrabberService) PopulateDataMovies() error {
 	}
 	log.Println("Fetching Movie Data Done at:", time.Since(fetchingstart))
 
-	TransformMovieData(s.db, result)
+	err = TransformMovieData(s.db, result)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

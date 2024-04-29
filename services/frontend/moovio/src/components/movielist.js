@@ -17,7 +17,7 @@ const MovieList = ({moviedata, header}) => {
         <div>
             <h1 className="text-white font-bold text-2xl px-10 pt-10">{header}</h1>
             <div className="grid xl:grid-cols-8 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-6 p-10">
-            {moviedata.data.map(movie => {
+            {moviedata.map(movie => {
                 return (
                     <div key={movie.id} onClick={() => gotodetail(`${movie.id}`)} className="p-3 flex flex-col rounded-md shadow-lg bg-red-500 transition-all hover:scale-105">
                         <img src={movie.cover} width={300} height={300} alt={movie.title} onError={handleImgError}/>

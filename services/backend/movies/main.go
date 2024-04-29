@@ -12,8 +12,9 @@ func main() {
 	log.Println("Reading config...")
 	err := godotenv.Load("../.env")
 	if err != nil {
-		log.Fatal(err)
+		log.Println("can't find .env local")
 	}
+
 	log.Println("Config loaded...")
 	log.Println("Initiate DB Connection...")
 	db, err := helper.InitDB()

@@ -13,15 +13,22 @@ import (
 func main() {
 	err := godotenv.Load("../.env")
 	if err != nil {
-		log.Fatal(err)
+		log.Println("can't find .env local")
 	}
 
 	APIBaseURL := os.Getenv("SERVICE_BASE_URL")
+	appmode := os.Getenv("APP_MODE")
 
 	// Define Service URL
 	GrabberServiceURL, _ := url.Parse(APIBaseURL + ":9002")
 	MovieServiceURL, _ := url.Parse(APIBaseURL + ":9003")
 	StreamerServiceURL, _ := url.Parse(APIBaseURL + ":9004")
+
+	if appmode != "local" {
+		GrabberServiceURL, _ = url.Parse("http://grabber:9002")
+		MovieServiceURL, _ = url.Parse("http://movies:9003")
+		StreamerServiceURL, _ = url.Parse("http://streamer:9004")
+	}
 
 	// Define Service Reverse Proxy
 	GrabberServiceProxy := httputil.NewSingleHostReverseProxy(GrabberServiceURL)

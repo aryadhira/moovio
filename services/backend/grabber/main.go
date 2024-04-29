@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"moovio/libs/helper"
-	. "moovio/services/backend/grabber/controller"
+	"moovio/services/backend/grabber/controller"
 
 	"github.com/joho/godotenv"
 )
@@ -12,8 +12,9 @@ func main() {
 	log.Println("Reading config...")
 	err := godotenv.Load("../.env")
 	if err != nil {
-		log.Fatal(err)
+		log.Println("can't find .env local")
 	}
+
 	log.Println("Config loaded...")
 	log.Println("Initiate DB Connection...")
 	db, err := helper.InitDB()
@@ -23,9 +24,9 @@ func main() {
 	log.Println("DB Connected...")
 
 	log.Println("Starting Grabber Services...")
-	svc := NewGrabberService(db)
+	svc := controller.NewGrabberService(db)
 
-	apiserver := NewGrabberApiServer(svc)
+	apiserver := controller.NewGrabberApiServer(svc)
 
 	log.Fatal(apiserver.Start(":9002"))
 }

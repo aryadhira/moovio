@@ -29,6 +29,7 @@ func TransformMovieData(db helper.Mongodbhelper, datas map[string]interface{}) e
 	moviedatas := movies.([]interface{})
 	movs := make([]interface{}, 0)
 
+	log.Println("Getting existing movie data")
 	// Current Data
 	existingdata := []models.MovieModel{}
 	err := db.FindMany(new(models.MovieModel).CollectionName(), bson.M{}, bson.M{}, &existingdata)
@@ -41,6 +42,9 @@ func TransformMovieData(db helper.Mongodbhelper, datas map[string]interface{}) e
 		existingdatamap[key] = true
 	}
 
+	log.Println("Transformation start...")
+	moviecount := len(moviedatas)
+	log.Printf("Total Movie to Transform %d", moviecount)
 	for _, each := range moviedatas {
 		obj := each.(map[string]interface{})
 

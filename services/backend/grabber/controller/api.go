@@ -1,4 +1,4 @@
-package grabber
+package controller
 
 import (
 	"log"

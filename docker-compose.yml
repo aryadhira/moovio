@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - /Users/aryadhira/Documents/Dataset/mongodb:/etc/mongo
+    ports:
+      - 27013:27017
+    networks:
+      - moovionet
+  apigateway:
+    image: apigateway:1.0.0
+    ports:
+      - "9001:9001"
+    env_file:
+      - services/backend/.env
+    depends_on:
+      - grabber
+    networks:
+      - moovionet
+  grabber:
+    image: grabber:1.0.0
+    ports:
+      - "9002:9002"
+    env_file:
+      - services/backend/.env
+    depends_on:
+      - mongodb
+    networks:
+      - moovionet
+  movies:
+    image: movies:1.0.0
+    ports:
+      - "9003:9003"
+    env_file:
+      - services/backend/.env
+    depends_on:
+      - mongodb
+    networks:
+      - moovionet
+  streamer:
+    image: streamer:1.0.0
+    ports:
+      - "9004:9004"
+    env_file:
+      - services/backend/.env
+    depends_on:
+      - mongodb
+    networks:
+      - moovionet
+  moovio:
+    image: moovio:1.0.0
+    ports:
+      - "9000:9000"
+    env_file:
+      - services/frontend/moovio/.env
+    networks:
+      - moovionet
+
+networks:
+  moovionet:
+    driver: bridge
