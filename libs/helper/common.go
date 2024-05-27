@@ -3,7 +3,9 @@ package helper
 import (
 	"moovio/libs/constant"
 	"os"
+	"reflect"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -50,7 +52,11 @@ func InterfaceToInt(input interface{}) int {
 		return out
 	}
 
-	out = input.(int)
+	switch input.(type){
+	case string:
+		data := input.(string)
+		out, _ = strconv.Atoi(data)
+	}
 
 	return out
 }
@@ -80,4 +86,23 @@ func ArrayinterfaceToArrayString(input []interface{}) []string {
 	}
 
 	return out
+}
+
+func StructToMap(obj interface{}) map[string]interface{}{
+	result := make(map[string]interface{})
+    value := reflect.ValueOf(obj)
+    t := value.Type()
+
+    if t.Kind() != reflect.Struct {
+        return nil
+    }
+
+    for i := 0; i < value.NumField(); i++ {
+        field := t.Field(i)
+        fieldValue := value.Field(i).Interface()
+		key := strings.ToLower(field.Name)
+        result[key] = fieldValue
+    }
+
+    return result
 }

@@ -4,6 +4,7 @@ import (
 	"log"
 	"moovio/libs/helper"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -25,6 +26,7 @@ func (s *MoviesApiServer) Start(listenaddr string) error {
 
 	mux.HandleFunc("/movies/getmovielist", s.GetMovieList)
 	mux.HandleFunc("/movies/getmoviedetail", s.GetMovieDetail)
+	mux.HandleFunc("/movies/getallmovies", s.GetAllMovies)
 
 	handler := cors.Default().Handler(mux)
 
@@ -69,6 +71,18 @@ func (s *MoviesApiServer) GetMovieDetail(w http.ResponseWriter, r *http.Request)
 	id := r.URL.Query().Get("id")
 	data, err := s.svc.GetMovieByID(id)
 
+	if err != nil {
+		helper.WriteJSON(w, http.StatusUnprocessableEntity, err.Error(), nil)
+	}
+
+	helper.WriteJSON(w, http.StatusOK, "", data)
+}
+
+func (s *MoviesApiServer) GetAllMovies(w http.ResponseWriter, r *http.Request) {
+	pageidstr := r.URL.Query().Get("page")
+	pageid, _ := strconv.Atoi(pageidstr)
+
+	data,err := s.svc.GetAllMovies(pageid)
 	if err != nil {
 		helper.WriteJSON(w, http.StatusUnprocessableEntity, err.Error(), nil)
 	}

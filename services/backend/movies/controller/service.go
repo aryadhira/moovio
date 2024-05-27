@@ -3,7 +3,6 @@ package movie
 import (
 	. "moovio/libs/businesslogic"
 	"moovio/libs/helper"
-	"moovio/libs/models"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -29,17 +28,17 @@ func (s *MovieService) GetLatestMovieList() ([]bson.M, error) {
 	return out, nil
 }
 
-func (s *MovieService) GetMovieByID(id string) (models.MovieModel, error) {
+func (s *MovieService) GetMovieByID(id string) (bson.M, error) {
 	var err error
 
 	objid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return models.MovieModel{}, err
+		return nil, err
 	}
 
 	out, err := GetMovieByID(s.db, objid)
 	if err != nil {
-		return models.MovieModel{}, err
+		return nil, err
 	}
 
 	return out, nil
@@ -51,6 +50,16 @@ func (s *MovieService) GetTopImdbRating() ([]bson.M, error) {
 	if err != nil {
 		return out, err
 	}
+
+	return out, nil
+}
+
+func (s *MovieService) GetAllMovies(page int) (bson.M, error) {
+	var err error
+	out, err := GetAllMovies(s.db, page)
+	if err != nil {
+		return out, err
+	}	
 
 	return out, nil
 }
